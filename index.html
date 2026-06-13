@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selamat Wisuda, Sayang! 🎓💖</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffe5ec, #ffffff);
+            color: #4a4a4a;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 1. LAYER PALING BELAKANG: Kolase Foto (Transparan) */
+        .photo-collage-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-auto-rows: 150px;
+            gap: 5px;
+            padding: 5px;
+            opacity: 0.12; /* Transparansi kolase */
+            z-index: 0;    /* Paling belakang */
+            pointer-events: none;
+        }
+
+        .collage-item {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 2. LAYER TENGAH: Kelopak Bunga/Daun Gugur */
+        .sakura-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1; /* Di atas kolase foto, di bawah konten utama */
+        }
+
+        .petal {
+            position: absolute;
+            background-color: #ffb7c5;
+            border-radius: 150% 0 150% 150%;
+            opacity: 0.7;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10%) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* 3. LAYER PALING DEPAN: Kotak Surat & Konten Utama */
+        .container {
+            max-width: 600px;
+            width: 90%;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.88); /* Dibuat agak solid agar tulisan tetap jelas dibaca */
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.4);
+            backdrop-filter: blur(12px); /* Efek blur kaca blur di belakang teks */
+            text-align: center;
+            border: 2px solid #ffb6c1;
+            z-index: 2; /* Berada di paling depan */
+        }
+
+        .header-icon {
+            font-size: 4rem;
+            animation: pulse 2s infinite;
+        }
+
+        h1 {
+            color: #ff6584;
+            font-size: 2.2rem;
+            margin: 15px 0;
+            font-weight: 700;
+        }
+
+        .sub-title {
+            color: #ff8fa3;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        /* Foto Frame Utama */
+        .photo-frame {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            border: 5px solid #fff;
+            box-shadow: 0 8px 20px rgba(255, 101, 132, 0.3);
+            overflow: hidden;
+            background: #ffe5ec;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Surat Romantis */
+        .letter-box {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #ff6584;
+            text-align: left;
+            line-height: 1.6;
+            font-size: 1.05rem;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+            margin-bottom: 30px;
+        }
+
+        .letter-box p {
+            margin-bottom: 15px;
+        }
+
+        .letter-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Tombol Interaktif */
+        .btn-love {
+            background: linear-gradient(45deg, #ff6584, #ff8fa3);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(255, 101, 132, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-love:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 101, 132, 0.6);
+        }
+
+        /* Pop-up Ucapan */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+            width: 85%;
+            border: 3px solid #ff8fa3;
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .close-btn {
+            background: #ff6584;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        /* Animasi */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        footer {
+            margin: 20px 0;
+            font-size: 0.9rem;
+            color: #ff8fa3;
+            z-index: 2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="photo-collage-bg">
+        <img class="collage-item" src="bg1.jpeg" alt="Memori">
+        <img class="collage-item" src="bg2.jpeg" alt="Memori">
+        <img class="collage-item" src="bg3.jpeg" alt="Memori">
+        <img class="collage-item" src="bg4.jpeg" alt="Memori">
+        <img class="collage-item" src="bg5.jpeg" alt="Memori">
+        <img class="collage-item" src="bg6.jpeg" alt="Memori">
+        <img class="collage-item" src="bg7.jpeg" alt="Memori">
+        <img class="collage-item" src="bg8.jpeg" alt="Memori">
+        <img class="collage-item" src="bg1.jpeg" alt="Memori">
+        <img class="collage-item" src="bg2.jpeg" alt="Memori">
+        <img class="collage-item" src="bg3.jpeg" alt="Memori">
+        <img class="collage-item" src="bg4.jpeg" alt="Memori">
+        <img class="collage-item" src="bg5.jpeg" alt="Memori">
+        <img class="collage-item" src="bg6.jpeg" alt="Memori">
+        <img class="collage-item" src="bg7.jpeg" alt="Memori">
+        <img class="collage-item" src="bg8.jpeg" alt="Memori">
+    </div>
+
+    <div class="sakura-container" id="sakura"></div>
+
+    <div class="container">
+        <div class="header-icon">🎓❤️</div>
+        <h1>Happy Graduation, Sayang!</h1>
+        <p class="sub-title">Hari ini dunia merayakan keberhasilanmu, dan aku adalah salah satu orang yang paling bangga.</p>
+
+        <div class="photo-frame">
+            <img src="1.jpeg" alt="Foto Pasangan">
+        </div>
+
+        <div class="letter-box">
+            <p><strong>Hai Sayang,</strong></p>
+            <p>Selamat atas kelulusanmu! Semua kerja keras, dan perjuanganmu akhirnya terbayar lunas hari ini.</p>
+            <p>Melihatmu memakai baju wisuda membuatku sadar betapa beruntungnya aku memiliki pasangan yang hebat dan berdedikasi sepertimu. Ini barulah awal dari petualangan besar yang menantimu di luar sana.</p>
+            <p>Apapun yang terjadi selanjutnya, ingat ya, aku akan selalu ada di sini untuk mendukungmu, menyemangatimu, dan mencintaimu di setiap langkahmu.</p>
+            <p><em>With all my love,</em><br>❤️ for my first love</p>
+
+            <p><strong>Sayangku cantikku bbyku mommyku,</strong></p>
+            <p>Sekali lagi, selamat wisuda ya! Hari ini kamu terlihat sangat cantik/tampan dan bersinar. Yuk, habis ini kita rayakan bareng! 🍰💐</p>            
+        </div>
+        
+        <button class="btn-love" onclick="showSurprise()">Klik Ini Untuk Kejutan Kecil ✨</button>
+    </div>
+
+    <div class="modal" id="loveModal">
+        <div class="modal-content">
+            <h2>I Love You! 💖</h2>
+            <p style="margin-top: 15px;">Sekali lagi, selamat wisuda ya! Hari ini kamu terlihat sangat cantik/tampan dan bersinar. Yuk, habis ini kita rayakan bareng! 🍰💐</p>
+            <button class="close-btn" onclick="closeSurprise()">Tutup ❤️</button>
+        </div>
+    </div>
+
+    <footer>Made with ❤️ for You</footer>
+
+    <script>
+        // Membuat Efek Kelopak Bunga/Daun Gugur secara Otomatis
+        const sakuraContainer = document.getElementById('sakura');
+        const petalCount = 30;
+
+        for (let i = 0; i < petalCount; i++) {
+            const petal = document.createElement('div');
+            petal.classList.add('petal');
+            
+            // Mengatur posisi dan animasi acak kelopak daun
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.width = Math.random() * 15 + 10 + 'px';
+            petal.style.height = Math.random() * 15 + 10 + 'px';
+            petal.style.animationDuration = Math.random() * 3 + 4 + 's'; // Durasi jatuh 4-7 detik
+            petal.style.animationDelay = Math.random() * 5 + 's';
+            
+            sakuraContainer.appendChild(petal);
+        }
+
+        // Fungsi Tombol Pop-up
+        function showSurprise() {
+            document.getElementById('loveModal').style.display = 'flex';
+        }
+
+        function closeSurprise() {
+            document.getElementById('loveModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
